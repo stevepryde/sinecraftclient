@@ -1,0 +1,2 @@
+# sinecraftclient
+Client for sinecraft
