@@ -145,6 +145,23 @@ class SineConnect {
             });
     }
 
+    updatepw(password, newPassword) {
+        var that = this;
+        return this.post("/auth/pw", { password, newPassword })
+            .then(function (response) {
+                if (response.status !== 200) {
+                    throw new AuthError("Invalid login: " + response.statusText);
+                }
+
+                that.updateAuthTokens(response.data);
+                return that.getCurrentUser();
+            })
+            .catch(function (err) {
+                that.clearAuthTokens();
+                throw err;
+            });
+    }
+
     updateAuthTokens(tokenData) {
         this.authToken = tokenData.authToken;
         this.refreshToken = tokenData.refreshToken;

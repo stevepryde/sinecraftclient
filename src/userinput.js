@@ -8,12 +8,12 @@ function ask(msg, options = {}) {
         });
         rl.on('SIGINT', () => {
             console.log("\n\nCTRL+C! Exiting.\n\n");
-            process.exit(1);
+            process.exit();
         });
 
         rl.on('SIGTERM', () => {
             console.log("\n\nSIGTERM! Exiting.\n\n");
-            process.exit(1);
+            process.exit();
         });
 
         rl.question(msg, (answer) => {

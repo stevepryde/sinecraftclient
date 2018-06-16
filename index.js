@@ -15,12 +15,12 @@ const VERSION = "1.0";
 
 process.on('SIGINT', function () {
     console.log('\nSIGINT caught');
-    process.exit(1);
+    process.exit();
 });
 
 process.on('SIGTERM', function () {
     console.log('\nSIGTERM caught.');
-    process.exit(1);
+    process.exit();
 });
 
 const configPath = path.join(__dirname, 'config.json');
@@ -67,6 +67,24 @@ async function doLogin() {
         });
 }
 
+async function doUpdatePW() {
+    var curPassword = await getPassword("Enter your old password:");
+    var newPassword = await getPassword("Enter your new password:");
+    var newPasswordRepeat = await getPassword("Enter your new password again:");
+    if (newPasswordRepeat !== newPassword) {
+        console.log("New password does not match. Aborting password change.");
+        return;
+    }
+
+    await conn.updatepw(curPassword, newPassword)
+        .then(function (response) {
+            console.log("Password updated successfully.\n");
+        })
+        .catch(function (err) {
+            console.log("Error: " + err.message);
+        });
+}
+
 async function doMainLoop() {
     console.log("\n");
     var title = "Sinecraft Version " + VERSION;
@@ -101,6 +119,9 @@ async function doMainLoop() {
                 await conn.logout().then(function (response) {
                     console.log("Logout successful.\n");
                 });
+                break;
+            case "changepw":
+                await doUpdatePW();
                 break;
             default:
                 console.log("Unknown command: " + cmd + "\n");
