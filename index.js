@@ -27,32 +27,28 @@ const configPath = path.join(__dirname, 'config.json');
 var config = new GameConfig(configPath, VERSION);
 var conn = new SineConnect(config);
 
-async function doCreate() {
-    console.log("Creating a new account...");
-    var username = await ask("Enter a username:");
-    if (username.length === 0) {
-        return;
-    }
+// async function doCreate() {
+//     console.log("Creating a new account...");
+//     var username = await ask("Enter a username:");
+//     if (username.length === 0) {
+//         return;
+//     }
 
-    var password = await getPassword("Enter a password:");
-    var displayName = await ask("Enter your display name:");
-    await conn.createUser(username, password, displayName)
-        .then(function (response) {
-            console.log("Account creation successful.\n");
-            console.log("Welcome, " + conn.user.displayName + "\n");
-        })
-        .catch(function (err) {
-            console.log("Error: " + err.message);
-        });
-}
+//     var password = await getPassword("Enter a password:");
+//     var displayName = await ask("Enter your display name:");
+//     await conn.createUser(username, password, displayName)
+//         .then(function (response) {
+//             console.log("Account creation successful.\n");
+//             console.log("Welcome, " + conn.user.displayName + "\n");
+//         })
+//         .catch(function (err) {
+//             console.log("Error: " + err.message);
+//         });
+// }
 
 async function doLogin() {
-    console.log("Type 'create' to create a new account");
     var username = await ask("Enter your username:");
-    if (username === "create") {
-        return doCreate();
-    }
-    else if (username.length === 0) {
+    if (username.length === 0) {
         return;
     }
 
@@ -124,7 +120,9 @@ async function doMainLoop() {
                 await doUpdatePW();
                 break;
             default:
-                console.log("Unknown command: " + cmd + "\n");
+                await conn.sendCommand(cmd).then(function (response) {
+                    console.log(response.data.message);
+                });
                 break;
         }
     }

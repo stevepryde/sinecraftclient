@@ -142,6 +142,9 @@ class SineConnect {
 
                 that.clearAuthTokens();
                 return response;
+            }).catch(function (err) {
+                // Force logout.
+                that.clearAuthTokens();
             });
     }
 
@@ -173,6 +176,20 @@ class SineConnect {
             authToken: "",
             refreshToken: ""
         });
+    }
+
+    sendCommand(cmd) {
+        return this.post("/game/cmd", { cmd: cmd })
+            .then(function (response) {
+                if (response.status !== 200) {
+                    throw new Error(cmd);
+                }
+
+                return response;
+            })
+            .catch(function (err) {
+                console.log("Error executing command: " + cmd);
+            });
     }
 }
 
