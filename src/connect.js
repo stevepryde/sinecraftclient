@@ -186,9 +186,6 @@ class SineConnect {
                 }
 
                 return response;
-            })
-            .catch(function (err) {
-                console.log("Error executing command: " + cmd);
             });
     }
 }

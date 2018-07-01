@@ -122,6 +122,8 @@ async function doMainLoop() {
             default:
                 await conn.sendCommand(cmd).then(function (response) {
                     console.log(response.data.message);
+                }).catch(function (err) {
+                    console.log("Error executing command: " + cmd);
                 });
                 break;
         }
