@@ -79,6 +79,10 @@ async function doMainLoop() {
         }
 
         var playerStatus = await conn.getPlayerStatus();
+        if (!conn.isAuthed()) {
+            continue;
+        }
+
         if (playerStatus) {
             console.log("");
             console.log(playerStatus.status + "\n");

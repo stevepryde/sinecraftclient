@@ -189,6 +189,7 @@ class SineConnect {
     }
 
     getPlayerStatus() {
+        var that = this;
         return this.get("/user/status")
             .then(function (response) {
                 if (response.status !== 200) {
@@ -196,6 +197,9 @@ class SineConnect {
                 }
 
                 return response.data;
+            })
+            .catch(function (err) {
+                that.clearAuthTokens();
             });
     }
 }
