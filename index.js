@@ -27,25 +27,6 @@ const configPath = path.join(__dirname, 'config.json');
 var config = new GameConfig(configPath, VERSION);
 var conn = new SineConnect(config);
 
-// async function doCreate() {
-//     console.log("Creating a new account...");
-//     var username = await ask("Enter a username:");
-//     if (username.length === 0) {
-//         return;
-//     }
-
-//     var password = await getPassword("Enter a password:");
-//     var displayName = await ask("Enter your display name:");
-//     await conn.createUser(username, password, displayName)
-//         .then(function (response) {
-//             console.log("Account creation successful.\n");
-//             console.log("Welcome, " + conn.user.displayName + "\n");
-//         })
-//         .catch(function (err) {
-//             console.log("Error: " + err.message);
-//         });
-// }
-
 async function doLogin() {
     var username = await ask("Enter your username:");
     if (username.length === 0) {
@@ -56,7 +37,7 @@ async function doLogin() {
     await conn.login(username, password)
         .then(function (response) {
             console.log("Login successful.\n");
-            console.log("Welcome, " + conn.user.displayName + "\n");
+            console.log("Welcome, " + conn.user.name + "\n");
         })
         .catch(function (err) {
             console.log("Error: " + err.message);
@@ -89,7 +70,7 @@ async function doMainLoop() {
 
     if (conn.isAuthed()) {
         await conn.getCurrentUser();
-        console.log("Welcome, " + conn.user.displayName + "\n");
+        console.log("Welcome, " + conn.user.name + "\n");
     }
 
     while (true) {
@@ -97,13 +78,18 @@ async function doMainLoop() {
             await doLogin();
         }
 
-        console.log("\n");
+        var playerStatus = await conn.getPlayerStatus();
+        if (playerStatus) {
+            console.log("");
+            console.log(playerStatus.status + "\n");
+        }
+
         var cmd = await ask("Enter your command:");
         switch (cmd) {
             case "ping":
                 await conn.getCurrentUser();
                 if (conn.isAuthed()) {
-                    console.log("User: " + conn.user.displayName);
+                    console.log("User: " + conn.user.name);
                     console.log("Connected.");
                 }
                 break;
@@ -121,7 +107,7 @@ async function doMainLoop() {
                 break;
             default:
                 await conn.sendCommand(cmd).then(function (response) {
-                    console.log(response.data.message);
+                    console.log("\n" + response.data.message);
                 }).catch(function (err) {
                     console.log("Error executing command: " + cmd);
                 });

@@ -59,6 +59,9 @@ class SineConnect {
                 return that.req(response.config, {
                     skipInterceptor: true
                 });
+            }).catch(function (err) {
+                console.log("Failed to refresh auth token. You will be logged out.");
+                that.clearAuthTokens();
             });
         }
 
@@ -97,14 +100,10 @@ class SineConnect {
         });
     }
 
-    createUser(username, password, displayName) {
+    createUser(username, password) {
         var that = this;
 
-        if (!displayName) {
-            displayName = username;
-        }
-
-        return this.post("/auth/create", { username, password, displayName })
+        return this.post("/auth/create", { username, password })
             .then(function (response) {
                 if (response.status !== 200) {
                     throw new AuthError("Invalid login: " + response.statusText);
@@ -186,6 +185,17 @@ class SineConnect {
                 }
 
                 return response;
+            });
+    }
+
+    getPlayerStatus() {
+        return this.get("/user/status")
+            .then(function (response) {
+                if (response.status !== 200) {
+                    throw new Error("Error getting status");
+                }
+
+                return response.data;
             });
     }
 }
