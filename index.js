@@ -15,11 +15,13 @@ const VERSION = "1.0";
 
 process.on('SIGINT', function () {
     console.log('\nSIGINT caught');
+    process.stdin.removeAllListeners();
     process.exit();
 });
 
 process.on('SIGTERM', function () {
     console.log('\nSIGTERM caught.');
+    process.stdin.removeAllListeners();
     process.exit();
 });
 
@@ -100,6 +102,7 @@ async function doMainLoop() {
             case "quit":
                 console.log("Ok, bye.");
                 console.log("\n\nThank you for playing Sinecraft. See you next time.\n");
+                process.stdin.removeAllListeners();
                 return;
             case "logout":
                 await conn.logout().then(function (response) {
